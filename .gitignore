@@ -1,0 +1,23 @@
+.env
+anvil_state.json
+cat > .gitignore << 'EOF'
+# Python
+tool/venv/
+__pycache__/
+*.pyc
+
+# Bí mật — KHÔNG commit
+.env
+tool/.env
+
+# State Anvil (nặng, tái tạo được)
+anvil_state*.json
+states/
+
+# Foundry: thư viện tải về và file build
+Contracts_Check/contracts/lib/
+Contracts_Check/contracts/out/
+Contracts_Check/contracts/cache/
+Contracts_Check/contracts/broadcast/
+EOF
+cat .gitignore

@@ -1,0 +1,53 @@
+
+=== S1 Hợp lệ: gọi rỗng tới owner #2 ===
+  safeTxHash: 0x4f8f904206b8d0e2eabb860fb935403ae517c63d1bdeb44d905910fbdf70aa69
+  [PASS] Không phát hiện vi phạm.
+  [Đối chứng theo mẫu] PASS: Không có calldata
+
+=== S2 Bybit: delegatecall transfer() ngụy trang ===
+  safeTxHash: 0xa71ccb816a414175fc517fca968e06c99ada2df628f57cf5d1d39b7088df49f2
+  [FAIL] 2 phát hiện:
+    - (static) [WARN] operation: delegatecall tới 0x06f572E08e147D185286fD9338FdFFA572997cd0 — địa chỉ không nằm trong allowlist
+    - (simulation) [CRITICAL] masterCopy: masterCopy (slot 0) bị ghi đè — Safe trỏ sang logic khác (mẫu tấn công Bybit)
+        trước: 0x29fcB43b46531BcA003ddC8FCB67FFE91900C762
+        sau  : 0x06f572E08e147D185286fD9338FdFFA572997cd0
+  [Đối chứng theo mẫu] PASS: Giải mã được: transfer(address,uint256)
+
+=== S3 Thêm owner kẻ tấn công + hạ threshold xuống 1 ===
+  safeTxHash: 0x6a6b06e4842cb325326a615f9d2aa8cb8fadd46906c7778bde697b8d4980e355
+  [FAIL] 2 phát hiện:
+    - (simulation) [HIGH] owners: Owner thêm: ['0xa0ee7a142d267c1f36714e4a8f75612f20a79720']  bỏ: []
+        trước: ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC']
+        sau  : ['0xa0Ee7A142d267C1f36714E4a8F75612F20a79720', '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC']
+    - (simulation) [CRITICAL] threshold: Threshold 2 → 1 (giảm — cần ít chữ ký hơn)
+        trước: 2
+        sau  : 1
+  [Đối chứng theo mẫu] FAIL: Gọi hàm quản trị Safe: addOwnerWithThreshold(address,uint256)
+
+=== S4 Bật module của kẻ tấn công ===
+  safeTxHash: 0x97ded5ee4e7c2d4621802271aebb0d6a4f0a11b3dd1eed5d8070aabc8a49a1f9
+  [FAIL] 1 phát hiện:
+    - (simulation) [CRITICAL] modules: Module mới ['0xa0ee7a142d267c1f36714e4a8f75612f20a79720'] — module thực thi được giao dịch KHÔNG cần chữ ký
+        trước: []
+        sau  : ['0xa0Ee7A142d267C1f36714E4a8F75612F20a79720']
+  [Đối chứng theo mẫu] FAIL: Gọi hàm quản trị Safe: enableModule(address)
+
+=== S5 Đổi fallback handler ===
+  safeTxHash: 0x552b4fa0b15d8d75b616bc8645c8e383e6f6fdaeef253cf4ec23a36a7ab30098
+  [FAIL] 1 phát hiện:
+    - (simulation) [HIGH] fallbackHandler: Fallback handler bị thay — lời gọi lạ tới Safe sẽ chạy code mới
+        trước: 0xfd0732Dc9E303f09fCEf3a7388Ad10A83459Ec99
+        sau  : 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720
+  [Đối chứng theo mẫu] FAIL: Gọi hàm quản trị Safe: setFallbackHandler(address)
+
+==============================================================================
+Kịch bản                                            Loại    Công cụ  Theo mẫu
+------------------------------------------------------------------------------
+S1 Hợp lệ: gọi rỗng tới owner #2                    benign  PASS     PASS
+S2 Bybit: delegatecall transfer() ngụy trang        attack  FAIL     PASS
+S3 Thêm owner kẻ tấn công + hạ threshold xuống 1    attack  FAIL     FAIL
+S4 Bật module của kẻ tấn công                       attack  FAIL     FAIL
+S5 Đổi fallback handler                             attack  FAIL     FAIL
+------------------------------------------------------------------------------
+Công cụ (tĩnh + mô phỏng)    TPR = 4/4 = 100%   FPR = 0/1 = 0%
+Đối chứng theo mẫu           TPR = 3/4 = 75%   FPR = 0/1 = 0%

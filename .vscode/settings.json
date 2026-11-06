@@ -1,0 +1,8 @@
+{
+    "solidity.packageDefaultDependenciesContractsDirectory": "contracts/src",
+    "solidity.packageDefaultDependenciesDirectory": "contracts/lib",
+    "solidity.formatter": "forge",
+    "python.defaultInterpreterPath": "${workspaceFolder}/tool/venv/bin/python",
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "python.terminal.useEnvFile": true
+}
