@@ -103,13 +103,46 @@ def xcheck_states(primary: dict, witnesses: list[dict], when: str) -> list[dict]
     return out
 
 
+APPROVED_HASHES_SLOT = 8
+
+
+def sim_artifact_slots(safe_tx_hash: str, signers: list[str]) -> set[str]:
+    """
+    Slot approvedHashes[signer][safeTxHash] do CHÍNH simulator tạo ra (approveHash thay
+    cho chữ ký off-chain). Safe ≤ v1.2.0 xoá các approval này khi thực thi → diff thấy
+    slot lạ bị ghi, dù ngoài đời (chữ ký ECDSA) không hề có. Trả về hex 64 ký tự.
+    Chỉ tính cho hash HIỆN TẠI — approval cài sẵn cho giao dịch khác (S6) không bị lọc.
+    """
+    h = Web3.to_bytes(hexstr=safe_tx_hash)
+    out = set()
+    for o in signers:
+        inner = Web3.keccak(encode(["address", "uint256"],
+                                   [Web3.to_checksum_address(o), APPROVED_HASHES_SLOT]))
+        out.add(Web3.keccak(encode(["bytes32", "bytes32"], [h, bytes(inner)])).hex()
+                .removeprefix("0x").lower())
+    return out
+
+
+def _mentions(obj, slots: set[str]) -> bool:
+    """storage_diff in slot KHÔNG có số 0 ở đầu (vd 0x210c… thay vì 0x0210c…) → so cả 2 dạng."""
+    s = json.dumps(obj, default=str).lower()
+    for a in slots:
+        short = a.lstrip("0") or "0"
+        if a in s or f"0x{short}" in s or f"unknown(0x{short[:10]}" in s \
+                or f"unknown(0x{a[:10]}" in s:
+            return True
+    return False
+
+
 def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
     snap = snapshot(w3)
     conseq, xcheck_f = [], []
     try:
         before = read_state(rpc, safe)
         xcheck_f += xcheck_states(before, [read_state(r, safe) for r in witnesses], "trước")
-        res = simulate_safe_tx(w3, safe, sc["to"], sc["data"], 0, sc["operation"])
+        res = simulate_safe_tx(w3, safe, sc["to"], sc["data"], sc.get("value", 0),
+                               sc["operation"], sc.get("gas", 3_000_000),
+                               **sc.get("refund", {}))
         after = read_state(rpc, safe)
         xcheck_f += xcheck_states(after, [read_state(r, safe) for r in witnesses], "sau")
         changes = trace_safe_storage(w3, res["tx_hash"], safe)  # phải trace TRƯỚC khi revert
@@ -133,6 +166,9 @@ def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
     else:
         inv_f = check_invariants(before, after)
         diff_f, touched = analyze_storage(changes, build_slot_labels(before, after))
+        artifacts = sim_artifact_slots(res["safe_tx_hash"], res["signers"])
+        diff_f = [f for f in diff_f if not _mentions(f, artifacts)]
+        touched = [t for t in touched if not _mentions(t, artifacts)]
         conseq_f = consequence_findings(conseq)
 
     return {"res": res, "findings": static_f + inv_f + diff_f + conseq_f + xcheck_f,

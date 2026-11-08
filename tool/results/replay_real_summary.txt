@@ -1,0 +1,25 @@
+
+==============================================================================
+Tổng: 80 giao dịch   |   mô phỏng OK: 80   |   revert: 0   |   lỗi chạy: 0
+
+[Độ trung thực]  safeTxHash khớp: 77/80   nonce khớp: 77/80
+  (hash lệch mà nonce khớp → giao dịch thật dùng refund/safeTxGas ≠ 0; hành vi vẫn tương đương)
+
+[1] Báo động giả trên 75 giao dịch THƯỜNG
+  Tĩnh       FPR = 0/75 = 0%
+  Bất biến   FPR = 0/75 = 0%
+  Diff       FPR = 4/75 = 5%
+  Hậu quả    FPR = 0/75 = 0%
+  Kết hợp    FPR = 4/75 = 5%
+
+[2] Giao dịch QUẢN TRỊ (thay đổi quyền kiểm soát hợp lệ): cảnh báo 5/5  — mong đợi = 5/5
+
+[3] Đích delegatecall trong dữ liệu thật (kiểm tra trên Etherscan):
+  0x40A2aCCbd92BCA938b02010E17A5b8929b49130D  ×32   (trong allowlist)
+  0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761  ×2   (trong allowlist)
+
+[4] Giao dịch thường bị gắn cờ (cần xem nguyên nhân):
+  0x481490b7aa… -                      storage-diff:slot 0x210c2fbdf83da3d564e87681ad6a785691b5700c08d5d2f87dac83dde04d39c:WARN
+  0xd9d20bc005… multiSend              storage-diff:slot 0xa393f9efcdafb4459ea006753a00b27ffeeb7886f758f4a2a9a2d0590c4b891:WARN
+  0xb87b47671d… multiSend              storage-diff:slot 0x9a6d67df775eace2fe3deebc9f183dc88fa77b89168cebfe0a240be66d7213:WARN
+  0x072b902434… revokeRole             storage-diff:slot 0xbf1a44fc3f849db25e7a84d71119b2c3867667f3003ec957b56b85065ca671e:WARN

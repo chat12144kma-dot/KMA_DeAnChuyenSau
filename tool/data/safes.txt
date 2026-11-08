@@ -1,0 +1,7 @@
+# Safe mainnet công khai dùng cho bước 8 (FPR trên giao dịch thật)
+# Mỗi dòng một địa chỉ; phần sau dấu # là ghi chú
+0xB65cef03b9B89f99517643226d76e286ee999e77  # dev.badgerdao.eth — quản trị: tham số vault/strategy, timelock
+0xD0A7A8B98957b9CD3cFB9c0425AbE44551158e9e  # BadgerDAO treasury vault — tài sản dài hạn, tương tác DeFi
+0x30a9c1D258F6c2D23005e6450E72bDD42C541105  # payments.badgerdao.eth — chi trả contributor, bounty
+0x7128f5ff32eD07Ce12E6a9deBE32BB40F9884b3C  # Developer DAO treasury (3/6)
+0x5298a93734c3d979ef1f23f78ebb871879a21f22  # Safe dùng làm ví dụ trong docs Safe API

@@ -1,0 +1,101 @@
+80 giao dịch trong dữ liệu, 5 đã xong, chạy 75 giao dịch
+[1/75] 0xB65cef… nonce 1109  -                      status=1 thường    WARN
+[2/75] 0xB65cef… nonce 1107  multiSend              status=1 thường    WARN
+[3/75] 0xB65cef… nonce 1106  multiSend              status=1 thường    PASS
+[4/75] 0xB65cef… nonce 1105  -                      status=1 thường    PASS
+[5/75] 0xB65cef… nonce 1104  -                      status=1 thường    PASS
+[6/75] 0xB65cef… nonce 1103  -                      status=1 thường    PASS
+[7/75] 0xB65cef… nonce 1102  multiSend              status=1 thường    PASS
+[8/75] 0xB65cef… nonce 1101  multiSend              status=1 thường    PASS
+[9/75] 0xB65cef… nonce 1100  multiSend              status=1 thường    WARN
+[10/75] 0xB65cef… nonce 1099  multiSend              status=1 thường    PASS
+[11/75] 0xB65cef… nonce 1098  multiSend              status=1 thường    PASS
+[12/75] 0xB65cef… nonce 1097  multiSend              status=1 thường    PASS
+[13/75] 0xB65cef… nonce 1096  revokeRole             status=1 thường    PASS
+[14/75] 0xB65cef… nonce 1095  revokeRole             status=1 thường    WARN
+[15/75] 0xB65cef… nonce 1094  revokeRole             status=1 thường    PASS
+[16/75] 0xD0A7A8… nonce 412   addOwnerWithThreshold  status=1 quản trị  FAIL
+[17/75] 0xD0A7A8… nonce 411   transfer               status=1 thường    PASS
+[18/75] 0xD0A7A8… nonce 410   transfer               status=1 thường    PASS
+[19/75] 0xD0A7A8… nonce 409   transfer               status=1 thường    PASS
+[20/75] 0xD0A7A8… nonce 408   multiSend              status=1 thường    PASS
+[21/75] 0xD0A7A8… nonce 407   removeOwner            status=1 quản trị  FAIL
+[22/75] 0xD0A7A8… nonce 406   -                      status=1 thường    PASS
+[23/75] 0xD0A7A8… nonce 405   transfer               status=1 thường    PASS
+[24/75] 0xD0A7A8… nonce 404   multiSend              status=1 thường    PASS
+[25/75] 0xD0A7A8… nonce 403   safeTransferFrom       status=1 thường    PASS
+[26/75] 0xD0A7A8… nonce 402   transfer               status=1 thường    PASS
+[27/75] 0xD0A7A8… nonce 401   transfer               status=1 thường    PASS
+[28/75] 0xD0A7A8… nonce 400   multiSend              status=1 thường    PASS
+[29/75] 0xD0A7A8… nonce 399   transfer               status=1 thường    PASS
+[30/75] 0xD0A7A8… nonce 398   multiSend              status=1 thường    PASS
+[31/75] 0xD0A7A8… nonce 397   redeem                 status=1 thường    PASS
+[32/75] 0xD0A7A8… nonce 396   multiSend              status=1 thường    PASS
+[33/75] 0xD0A7A8… nonce 395   cooldown               status=1 thường    PASS
+[34/75] 0xD0A7A8… nonce 394   multiSend              status=1 thường    PASS
+[35/75] 0xD0A7A8… nonce 393   claimRewards           status=1 thường    PASS
+[36/75] 0x30a9c1… nonce 241   transfer               status=1 thường    PASS
+[37/75] 0x30a9c1… nonce 240   transfer               status=1 thường    PASS
+[38/75] 0x30a9c1… nonce 239   multiSend              status=1 thường    PASS
+[39/75] 0x30a9c1… nonce 238   multiSend              status=1 thường    PASS
+[40/75] 0x30a9c1… nonce 237   multiSend              status=1 thường    PASS
+[41/75] 0x30a9c1… nonce 236   multiSend              status=1 thường    PASS
+[42/75] 0x30a9c1… nonce 235   multiSend              status=1 thường    PASS
+[43/75] 0x30a9c1… nonce 234   transfer               status=1 thường    PASS
+[44/75] 0x30a9c1… nonce 233   multiSend              status=1 thường    PASS
+[45/75] 0x30a9c1… nonce 232   transfer               status=1 thường    PASS
+[46/75] 0x30a9c1… nonce 231   multiSend              status=1 thường    PASS
+[47/75] 0x30a9c1… nonce 230   multiSend              status=1 thường    PASS
+[48/75] 0x30a9c1… nonce 229   multiSend              status=1 thường    PASS
+[49/75] 0x30a9c1… nonce 228   multiSend              status=1 thường    PASS
+[50/75] 0x30a9c1… nonce 227   multiSend              status=1 thường    PASS
+[51/75] 0x30a9c1… nonce 226   transfer               status=1 thường    PASS
+[52/75] 0x30a9c1… nonce 225   transfer               status=1 thường    PASS
+[53/75] 0x30a9c1… nonce 224   multiSend              status=1 quản trị  FAIL
+[54/75] 0x30a9c1… nonce 223   -                      status=1 thường    PASS
+[55/75] 0x30a9c1… nonce 222   -                      status=1 thường    PASS
+[56/75] 0x7128f5… nonce 157   batchPayments          status=1 thường    PASS
+[57/75] 0x7128f5… nonce 156   batchPayments          status=1 thường    PASS
+[58/75] 0x7128f5… nonce 155   transfer               status=1 thường    PASS
+[59/75] 0x7128f5… nonce 154   transfer               status=1 thường    PASS
+[60/75] 0x7128f5… nonce 153   batchPayments          status=1 thường    PASS
+[61/75] 0x7128f5… nonce 152   transfer               status=1 thường    PASS
+[62/75] 0x7128f5… nonce 151   batchPayments          status=1 thường    PASS
+[63/75] 0x7128f5… nonce 150   transfer               status=1 thường    PASS
+[64/75] 0x7128f5… nonce 149   batchPayments          status=1 thường    PASS
+[65/75] 0x7128f5… nonce 148   transferFromWithReferenceAndFee status=1 thường    PASS
+[66/75] 0x7128f5… nonce 147   batchPayments          status=1 thường    PASS
+[67/75] 0x7128f5… nonce 146   batchPayments          status=1 thường    PASS
+[68/75] 0x7128f5… nonce 145   multiSend              status=1 thường    PASS
+[69/75] 0x7128f5… nonce 144   transferFromWithReferenceAndFee status=1 thường    PASS
+[70/75] 0x7128f5… nonce 143   transfer               status=1 thường    PASS
+[71/75] 0x7128f5… nonce 142   multiSend              status=1 thường    PASS
+[72/75] 0x7128f5… nonce 141   batchPayments          status=1 thường    PASS
+[73/75] 0x7128f5… nonce 140   batchPayments          status=1 thường    PASS
+[74/75] 0x7128f5… nonce 139   transfer               status=1 thường    PASS
+[75/75] 0x7128f5… nonce 138   multiSend              status=1 thường    PASS
+
+==============================================================================
+Tổng: 80 giao dịch   |   mô phỏng OK: 80   |   revert: 0   |   lỗi chạy: 0
+
+[Độ trung thực]  safeTxHash khớp: 77/80   nonce khớp: 77/80
+  (hash lệch mà nonce khớp → giao dịch thật dùng refund/safeTxGas ≠ 0; hành vi vẫn tương đương)
+
+[1] Báo động giả trên 75 giao dịch THƯỜNG
+  Tĩnh       FPR = 0/75 = 0%
+  Bất biến   FPR = 0/75 = 0%
+  Diff       FPR = 4/75 = 5%
+  Hậu quả    FPR = 0/75 = 0%
+  Kết hợp    FPR = 4/75 = 5%
+
+[2] Giao dịch QUẢN TRỊ (thay đổi quyền kiểm soát hợp lệ): cảnh báo 5/5  — mong đợi = 5/5
+
+[3] Đích delegatecall trong dữ liệu thật (kiểm tra trên Etherscan):
+  0x40A2aCCbd92BCA938b02010E17A5b8929b49130D  ×32   (trong allowlist)
+  0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761  ×2   (trong allowlist)
+
+[4] Giao dịch thường bị gắn cờ (cần xem nguyên nhân):
+  0x481490b7aa… -                      storage-diff:slot 0x210c2fbdf83da3d564e87681ad6a785691b5700c08d5d2f87dac83dde04d39c:WARN
+  0xd9d20bc005… multiSend              storage-diff:slot 0xa393f9efcdafb4459ea006753a00b27ffeeb7886f758f4a2a9a2d0590c4b891:WARN
+  0xb87b47671d… multiSend              storage-diff:slot 0x9a6d67df775eace2fe3deebc9f183dc88fa77b89168cebfe0a240be66d7213:WARN
+  0x072b902434… revokeRole             storage-diff:slot 0xbf1a44fc3f849db25e7a84d71119b2c3867667f3003ec957b56b85065ca671e:WARN

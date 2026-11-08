@@ -7,6 +7,9 @@ Quy trình (không cần private key):
   3. Ghép chữ ký kiểu "approved hash" (v=1) theo thứ tự địa chỉ owner tăng dần
   4. Gọi execTransaction → operation=1 thực sự delegatecall trong storage của Safe
 Dùng snapshot()/revert() bên ngoài để trả fork về trạng thái cũ sau mỗi kịch bản.
+
+Bước 8: nhận thêm tham số refund (safeTxGas, baseGas, gasPrice, gasToken,
+refundReceiver) để safeTxHash trùng khớp giao dịch thật trên mainnet.
 """
 
 import os
@@ -83,17 +86,21 @@ def build_approved_signatures(signers: list[str]) -> bytes:
 
 
 def simulate_safe_tx(w3: Web3, safe_address: str, to: str, data: str = "0x",
-                     value: int = 0, operation: int = 0, gas: int = 3_000_000) -> dict:
+                     value: int = 0, operation: int = 0, gas: int = 3_000_000,
+                     safe_tx_gas: int = 0, base_gas: int = 0, gas_price: int = 0,
+                     gas_token: str = ZERO, refund_receiver: str = ZERO) -> dict:
     """Thực thi một Safe transaction trên fork như thể đã đủ chữ ký."""
     safe_address = Web3.to_checksum_address(safe_address)
     safe = w3.eth.contract(address=safe_address, abi=SAFE_EXEC_ABI)
     to = Web3.to_checksum_address(to)
+    gas_token = Web3.to_checksum_address(gas_token or ZERO)
+    refund_receiver = Web3.to_checksum_address(refund_receiver or ZERO)
     data_bytes = Web3.to_bytes(hexstr=data)
+    params = (to, value, data_bytes, operation, safe_tx_gas, base_gas, gas_price,
+              gas_token, refund_receiver)
 
     nonce = safe.functions.nonce().call()
-    safe_tx_hash = safe.functions.getTransactionHash(
-        to, value, data_bytes, operation, 0, 0, 0, ZERO, ZERO, nonce
-    ).call()
+    safe_tx_hash = safe.functions.getTransactionHash(*params, nonce).call()
 
     owners = safe.functions.getOwners().call()
     threshold = safe.functions.getThreshold().call()
@@ -108,9 +115,8 @@ def simulate_safe_tx(w3: Web3, safe_address: str, to: str, data: str = "0x",
             w3.eth.wait_for_transaction_receipt(h)
 
         signatures = build_approved_signatures(signers)
-        tx_hash = safe.functions.execTransaction(
-            to, value, data_bytes, operation, 0, 0, 0, ZERO, ZERO, signatures
-        ).transact({"from": signers[0], "gas": gas})
+        tx_hash = safe.functions.execTransaction(*params, signatures).transact(
+            {"from": signers[0], "gas": gas})
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     finally:
         for o in signers:
