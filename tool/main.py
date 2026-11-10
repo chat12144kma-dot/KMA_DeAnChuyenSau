@@ -102,7 +102,15 @@ def xcheck_states(primary: dict, witnesses: list[dict], when: str) -> list[dict]
                                        f"{ws['rpc']} → {ws[f]}"})
     return out
 
-
+# Thư viện chính thức của Safe mà người dùng thật delegatecall hằng ngày.
+# Có thể ghi đè bằng biến môi trường DELEGATECALL_ALLOWLIST.
+DEFAULT_ALLOWLIST = [
+    "0x8D29bE29923b68abfDD21e541b9374737B49cdAD",  # MultiSend v1.1.1
+    "0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761",  # MultiSend v1.3.0
+    "0x40A2aCCbd92BCA938b02010E17A5b8929b49130D",  # MultiSendCallOnly v1.3.0
+    "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526",  # MultiSend v1.4.1
+    "0x9641d764fc13c8B624c04430C7356C1C7C8102e2",  # MultiSendCallOnly v1.4.1
+]
 APPROVED_HASHES_SLOT = 8
 
 
@@ -185,6 +193,7 @@ if __name__ == "__main__":
     safe = env["SAFE_ADDRESS"]
     attacker = Web3.to_checksum_address(env["ATTACKER"])
     allowlist = [a.strip() for a in os.getenv("DELEGATECALL_ALLOWLIST", "").split(",") if a.strip()]
+    allowlist = allowlist or DEFAULT_ALLOWLIST
     # RPC nhân chứng độc lập để đối chiếu (bỏ qua nếu trùng RPC chính)
     witnesses = [r.strip() for r in os.getenv("RPC_WITNESSES", "").split(",")
                  if r.strip() and r.strip() != rpc]
