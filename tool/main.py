@@ -16,13 +16,13 @@ from state_reader import read_state, load_env, CONSENSUS_FIELDS, _norm
 from simulator import snapshot, revert, simulate_safe_tx
 from checker import static_checks, check_invariants, verdict, format_report
 from storage_diff import trace_safe_storage, build_slot_labels, analyze_storage
-from baseline import pattern_check
+from baseline import pattern_check, pattern_check_realistic
 from consequences import (run_consequence_checks, takeover_tx, safe_tx_hash,
                           build_s6_multisend, _safe)
 
 LAYERS = [("static", "Tĩnh"), ("invariants", "Bất biến"), ("diff", "Diff"),
           ("conseq", "Hậu quả"), ("xcheck", "Đối chiếu"),
-          ("combined", "Kết hợp"), ("base", "Theo mẫu")]
+          ("combined", "Kết hợp"), ("base", "Theo mẫu"), ("base2", "Thực tế")]
 
 # Mức rủi ro cho từng loại hậu quả (NONE = không có hậu quả → không thành finding)
 CONSEQ_RISK = {
@@ -204,6 +204,7 @@ if __name__ == "__main__":
         print(f"\n=== {sc['label']} ===")
         out = run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses)
         base, reason = pattern_check(sc)
+        base2, reason2 = pattern_check_realistic(sc)
         print(f"  safeTxHash: {out['res']['safe_tx_hash']}")
         print(format_report(out["findings"]))
         written = ", ".join(t["label"] for t in out["touched"]) or "(chỉ nonce +1)"
@@ -211,6 +212,7 @@ if __name__ == "__main__":
         hq = ", ".join(r["consequence"] for r in out["conseq"]) or "(không chạy — tx revert)"
         print(f"  Thử khai thác: {hq}")
         print(f"  [Đối chứng theo mẫu] {base}: {reason}")
+        print(f"  [Đối chứng thực tế]  {base2}: {reason2}")
 
         # Tách 2 kết luận: (1) giao dịch có độc hại không — chỉ dựa trên các lớp
         # phân tích giao dịch; (2) môi trường (RPC) có đáng tin không — lớp đối chiếu.
@@ -224,6 +226,7 @@ if __name__ == "__main__":
         flags = dict(out["layers"])
         flags["combined"] = tx_verdict != "PASS"
         flags["base"] = base != "PASS"
+        flags["base2"] = base2 != "PASS"
         rows.append({"label": sc["label"], "kind": sc["kind"], **flags})
 
     width = 44 + 8 + 10 * len(LAYERS)
