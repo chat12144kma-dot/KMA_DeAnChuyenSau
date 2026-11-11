@@ -107,11 +107,21 @@ def summary(done: dict, allowlist: list[str]):
     admin = [r for r in ok if r["category"] == "quản trị"]
     print(f"\n[1] Báo động giả trên {len(normal)} giao dịch THƯỜNG")
     for k, n in [("static", "Tĩnh"), ("invariants", "Bất biến"), ("diff", "Diff"),
-                 ("conseq", "Hậu quả")]:
-        fp = sum(r["layers"][k] for r in normal)
+                 ("conseq", "Hậu quả"), ("asset", "Tài sản")]:
+        fp = sum(r["layers"].get(k, False) for r in normal)
         print(f"  {n:<10} FPR = {fp}/{len(normal)} = {fp / max(len(normal), 1):.0%}")
     fp = sum(r["verdict"] != "PASS" for r in normal)
     print(f"  {'Kết hợp':<10} FPR = {fp}/{len(normal)} = {fp / max(len(normal), 1):.0%}")
+    fp = sum(r["verdict"] == "FAIL" for r in normal)
+    print(f"  {'Chặn':<10} FPR = {fp}/{len(normal)} = {fp / max(len(normal), 1):.0%}")
+
+    hits = [r for r in ok if r.get("asset_detail")]
+    if hits:
+        print(f"\n[1b] Giao dịch bị lớp Tài sản gắn cờ: {len(hits)}")
+        for r in hits:
+            print(f"  {r['safeTxHash']}  ({r['category']}, {r['verdict']})")
+            for m in r["asset_detail"]:
+                print(f"      {m}")
 
     flagged = sum(r["verdict"] != "PASS" for r in admin)
     print(f"\n[2] Giao dịch QUẢN TRỊ (thay đổi quyền kiểm soát hợp lệ): "
@@ -189,6 +199,8 @@ if __name__ == "__main__":
                 "verdict": verdict(tx_f),
                 "layers": {k: bool(v) for k, v in out["layers"].items()},
                 "findings": [f"{f['layer']}:{f['invariant']}:{f['risk']}" for f in tx_f],
+                "asset_detail": [f"{f['risk']}: {f['message']}" for f in tx_f if f["layer"] == "asset"],
+                "moves": out.get("moves", []),
             })
             print(f"{tag} status={res['status']} {rec['category']:<9} {rec['verdict']}")
         except Exception as e:
