@@ -21,3 +21,6 @@ Contracts_Check/contracts/cache/
 Contracts_Check/contracts/broadcast/
 EOF
 cat .gitignore
+*:Zone.Identifier
+tool/trace_0x*.txt
+tool/flagged_txs.txt
