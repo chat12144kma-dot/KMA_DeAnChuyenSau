@@ -11,7 +11,7 @@ import os
 
 from eth_abi import encode
 from web3 import Web3
-
+from assets import asset_checks
 from state_reader import read_state, load_env, CONSENSUS_FIELDS, _norm
 from simulator import snapshot, revert, simulate_safe_tx
 from checker import static_checks, check_invariants, verdict, format_report
@@ -21,7 +21,7 @@ from consequences import (run_consequence_checks, takeover_tx, safe_tx_hash,
                           build_s6_multisend, _safe)
 
 LAYERS = [("static", "Tĩnh"), ("invariants", "Bất biến"), ("diff", "Diff"),
-          ("conseq", "Hậu quả"), ("xcheck", "Đối chiếu"),
+          ("conseq", "Hậu quả"), ("asset", "Tài sản"), ("xcheck", "Đối chiếu"),
           ("combined", "Kết hợp"), ("block", "Chặn"),
           ("base", "Theo mẫu"), ("base2", "Thực tế")]
 
@@ -80,6 +80,19 @@ def build_scenarios(w3: Web3, env: dict) -> list[dict]:
              "to": cs(benign_lib), "operation": 1,
              "data": calldata("batchSend(address[],uint256[])", ["address[]", "uint256[]"],
                               [rcpts, [10**17, 10**17]])})
+    token = env.get("MOCK_TOKEN")
+    if token:
+        token = cs(token)
+        scenarios.append(
+            {"label": "S8 Approve vô hạn token cho kẻ tấn công", "kind": "attack",
+             "to": token, "operation": 0,
+             "data": calldata("approve(address,uint256)", ["address", "uint256"],
+                              [attacker, 2**256 - 1])})
+        scenarios.append(
+            {"label": "S9 Hợp lệ: chuyển 10 token cho owner #2", "kind": "benign",
+             "to": token, "operation": 0,
+             "data": calldata("transfer(address,uint256)", ["address", "uint256"],
+                              [cs("0x70997970C51812dc3A010C7d01b50e0d17dc79C8"), 10 * 10**18])})
     return scenarios
 
 
@@ -157,13 +170,17 @@ def _mentions(obj, slots: set[str]) -> bool:
 def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
     snap = snapshot(w3)
     conseq, xcheck_f = [], []
+    asset_f, moves = [], []
+    safe_cs = Web3.to_checksum_address(safe)
     try:
         before = read_state(rpc, safe)
+        eth_before = w3.eth.get_balance(safe_cs)
         xcheck_f += xcheck_states(before, [read_state(r, safe) for r in witnesses], "trước")
         res = simulate_safe_tx(w3, safe, sc["to"], sc["data"], sc.get("value", 0),
                                sc["operation"], sc.get("gas", 3_000_000),
                                **sc.get("refund", {}))
         after = read_state(rpc, safe)
+        eth_after = w3.eth.get_balance(safe_cs)
         xcheck_f += xcheck_states(after, [read_state(r, safe) for r in witnesses], "sau")
         changes = trace_safe_storage(w3, res["tx_hash"], safe)  # phải trace TRƯỚC khi revert
         for r in witnesses:
@@ -173,6 +190,10 @@ def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
                                  "risk": "CRITICAL",
                                  "message": f"Trace storage của Safe khác nhau giữa {rpc} và {r}"})
         if res["status"] == 1:
+            # đọc sự kiện token TRƯỚC khi revert (receipt còn tồn tại)
+            asset_f, moves = asset_checks(w3, res["tx_hash"], safe)
+            if eth_after < eth_before:
+                moves.insert(0, f"Safe chuyển đi {(eth_before - eth_after) / 10**18} ETH")
             # mỗi phép thử tự snapshot/revert lồng bên trong snapshot của kịch bản
             conseq = run_consequence_checks(w3, safe, attacker)
     finally:
@@ -191,11 +212,12 @@ def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
         touched = [t for t in touched if not _mentions(t, artifacts)]
         conseq_f = consequence_findings(conseq)
 
-    return {"res": res, "findings": static_f + inv_f + diff_f + conseq_f + xcheck_f,
-            "touched": touched, "conseq": conseq,
+    return {"res": res,
+            "findings": static_f + inv_f + diff_f + asset_f + conseq_f + xcheck_f,
+            "touched": touched, "conseq": conseq, "moves": moves,
             "layers": {"static": bool(static_f), "invariants": bool(inv_f),
-                       "diff": bool(touched), "conseq": bool(conseq_f),
-                       "xcheck": bool(xcheck_f)}}
+                       "diff": bool(touched), "asset": bool(asset_f),
+                       "conseq": bool(conseq_f), "xcheck": bool(xcheck_f)}}
 
 
 if __name__ == "__main__":
@@ -223,6 +245,8 @@ if __name__ == "__main__":
         print(f"  Storage Safe bị ghi: {written}")
         hq = ", ".join(r["consequence"] for r in out["conseq"]) or "(không chạy — tx revert)"
         print(f"  Thử khai thác: {hq}")
+        tsan = "; ".join(out["moves"]) or "(không đổi)"
+        print(f"  Thay đổi tài sản: {tsan}")
         print(f"  [Đối chứng theo mẫu] {base}: {reason}")
         print(f"  [Đối chứng thực tế]  {base2}: {reason2}")
 
