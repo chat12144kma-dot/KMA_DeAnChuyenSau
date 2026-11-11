@@ -22,7 +22,8 @@ from consequences import (run_consequence_checks, takeover_tx, safe_tx_hash,
 
 LAYERS = [("static", "Tĩnh"), ("invariants", "Bất biến"), ("diff", "Diff"),
           ("conseq", "Hậu quả"), ("xcheck", "Đối chiếu"),
-          ("combined", "Kết hợp"), ("base", "Theo mẫu"), ("base2", "Thực tế")]
+          ("combined", "Kết hợp"), ("block", "Chặn"),
+          ("base", "Theo mẫu"), ("base2", "Thực tế")]
 
 # Mức rủi ro cho từng loại hậu quả (NONE = không có hậu quả → không thành finding)
 CONSEQ_RISK = {
@@ -52,7 +53,7 @@ def build_scenarios(w3: Web3, env: dict) -> list[dict]:
     follow_hash = safe_tx_hash(w3, safe, takeover_tx(safe, attacker), n + 1)
     s6_to, s6_data, s6_op = build_s6_multisend(sleeper, owners[:thr], follow_hash)
 
-    return [
+    scenarios = [
         {"label": "S1 Hợp lệ: gọi rỗng tới owner #2", "kind": "benign",
          "to": cs("0x70997970C51812dc3A010C7d01b50e0d17dc79C8"), "data": "0x", "operation": 0},
         {"label": "S2 Bybit: delegatecall transfer() ngụy trang", "kind": "attack",
@@ -70,6 +71,17 @@ def build_scenarios(w3: Web3, env: dict) -> list[dict]:
         {"label": "S6 Cửa hậu: MultiSend cài approvedHashes", "kind": "attack",
          "to": s6_to, "operation": s6_op, "data": s6_data},
     ]
+    benign_lib = env.get("BENIGN_LIB")
+    if benign_lib:
+        rcpts = [cs("0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65"),
+                 cs("0x9965507D1a55bcC2695C58ba16FB37d819B0A4BC")]
+        scenarios.append(
+            {"label": "S7 Hợp lệ: delegatecall thư viện chia ETH", "kind": "benign",
+             "to": cs(benign_lib), "operation": 1,
+             "data": calldata("batchSend(address[],uint256[])", ["address[]", "uint256[]"],
+                              [rcpts, [10**17, 10**17]])})
+    return scenarios
+
 
 
 def consequence_findings(results: list[dict]) -> list[dict]:
@@ -225,6 +237,7 @@ if __name__ == "__main__":
 
         flags = dict(out["layers"])
         flags["combined"] = tx_verdict != "PASS"
+        flags["block"] = tx_verdict == "FAIL"
         flags["base"] = base != "PASS"
         flags["base2"] = base2 != "PASS"
         rows.append({"label": sc["label"], "kind": sc["kind"], **flags})
