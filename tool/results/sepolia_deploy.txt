@@ -1,0 +1,20 @@
+== MaliciousImpl
+No files changed, compilation skipped
+Deployer: 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d
+Deployed to: 0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a
+Transaction hash: 0xb4ddea3dad0a841731c1ee0bbe0fda3ce392587b6b91b22b01f8076588d180c3
+== SleeperImpl
+No files changed, compilation skipped
+Deployer: 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d
+Deployed to: 0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6
+Transaction hash: 0xf1b7ac4e6b67154d9cfe76c7abb8e8db606962758b18c31e154167a6034ca85c
+== BatchTransfer
+No files changed, compilation skipped
+Deployer: 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d
+Deployed to: 0x789a4b1A094b021260b4b474a9C9c84838C3d596
+Transaction hash: 0x3a3790db611002378e0479d04f33925549384f9ec08ceecc78b2223358a8aad8
+== MockERC20
+No files changed, compilation skipped
+Deployer: 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d
+Deployed to: 0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6
+Transaction hash: 0xba96ca6eeb1a341fc18641e6ebea4571fac7ac433626537389fd1c1a237c9487

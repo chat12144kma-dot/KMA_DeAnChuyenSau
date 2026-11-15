@@ -73,8 +73,9 @@ def build_scenarios(w3: Web3, env: dict) -> list[dict]:
     ]
     benign_lib = env.get("BENIGN_LIB")
     if benign_lib:
-        rcpts = [cs("0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65"),
-                 cs("0x9965507D1a55bcC2695C58ba16FB37d819B0A4BC")]
+        if env.get("BENIGN_RCPTS"):
+            rcpts = [cs(a.strip()) for a in env["BENIGN_RCPTS"].split(",")]
+    
         scenarios.append(
             {"label": "S7 Hợp lệ: delegatecall thư viện chia ETH", "kind": "benign",
              "to": cs(benign_lib), "operation": 1,

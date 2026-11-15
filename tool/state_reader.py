@@ -110,7 +110,7 @@ def read_multi_rpc(rpc_list: list[str], safe_address: str) -> dict:
 
 
 def load_env() -> dict:
-    env_path = Path(__file__).parent / ".env"
+    env_path = Path(__file__).parent / os.getenv("ENV_FILE", ".env")
     env = {}
     if env_path.exists():
         for line in env_path.read_text().splitlines():
