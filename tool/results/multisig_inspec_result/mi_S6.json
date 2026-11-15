@@ -1,0 +1,126 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+    "chainId": 11155111,
+    "to": "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526",
+    "value": "0",
+    "data": "0x8d80ff0a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000013201e415bd019479000c71147ade4c74c1f4b36b147800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044a9059cbb000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266cc9a9a01f2df3bb26a9090269d45a804cb2ebe2370429d3f1df6766f67fe14c801e415bd019479000c71147ade4c74c1f4b36b147800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044a9059cbb00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8cc9a9a01f2df3bb26a9090269d45a804cb2ebe2370429d3f1df6766f67fe14c80000000000000000000000000000",
+    "operation": 1,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000"
+  },
+  "hashCheck": {
+    "status": "not_provided"
+  },
+  "actions": [
+    {
+      "type": "multi_send",
+      "title": "MultiSend batch",
+      "plainEnglish": "This batch contains 2 decoded actions.",
+      "technicalDetails": "Decoded at depth 1",
+      "addressesInvolved": [
+        "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526"
+      ],
+      "selector": "0x8d80ff0a",
+      "children": [
+        {
+          "type": "delegatecall",
+          "title": "DELEGATECALL",
+          "plainEnglish": "This executes external code in the Safe's context.",
+          "technicalDetails": "Target 0xE415bd019479000C71147adE4C74C1f4B36B1478",
+          "addressesInvolved": [
+            "0xE415bd019479000C71147adE4C74C1f4B36B1478"
+          ],
+          "selector": "0xa9059cbb",
+          "reputation": {
+            "status": "unknown"
+          }
+        },
+        {
+          "type": "delegatecall",
+          "title": "DELEGATECALL",
+          "plainEnglish": "This executes external code in the Safe's context.",
+          "technicalDetails": "Target 0xE415bd019479000C71147adE4C74C1f4B36B1478",
+          "addressesInvolved": [
+            "0xE415bd019479000C71147adE4C74C1f4B36B1478"
+          ],
+          "selector": "0xa9059cbb",
+          "reputation": {
+            "status": "unknown"
+          }
+        }
+      ],
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction uses DELEGATECALL",
+      "plainEnglish": "External code can run in the Safe's context and modify Safe state.",
+      "technicalExplanation": "Target 0xE415bd019479000C71147adE4C74C1f4B36B1478",
+      "recommendation": "Do not sign without a trusted technical review.",
+      "incidentPattern": "delegatecall-risk"
+    },
+    {
+      "severity": "critical",
+      "title": "Transaction uses DELEGATECALL",
+      "plainEnglish": "External code can run in the Safe's context and modify Safe state.",
+      "technicalExplanation": "Target 0xE415bd019479000C71147adE4C74C1f4B36B1478",
+      "recommendation": "Do not sign without a trusted technical review.",
+      "incidentPattern": "delegatecall-risk"
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "technicalExplanation": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "recommendation": "Review the raw transaction fields manually."
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe version could not be loaded; hash verification is unsupported.",
+      "technicalExplanation": "Safe version could not be loaded; hash verification is unsupported.",
+      "recommendation": "Review the raw transaction fields manually."
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "This executes external code in the Safe's context.",
+    "This executes external code in the Safe's context."
+  ],
+  "recommendation": "Do not sign. This transaction can change Safe control.",
+  "limitations": [
+    "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+    "Safe version could not be loaded; hash verification is unsupported."
+  ],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+      "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526",
+      "0xE415bd019479000C71147adE4C74C1f4B36B1478"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

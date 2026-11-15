@@ -1,0 +1,88 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+    "chainId": 11155111,
+    "to": "0x06f572E08e147D185286fD9338FdFFA572997cd0",
+    "value": "0",
+    "data": "0xa9059cbb00000000000000000000000006f572e08e147d185286fd9338fdffa572997cd00000000000000000000000000000000000000000000000000000000000000000",
+    "operation": 1,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000"
+  },
+  "hashCheck": {
+    "status": "not_provided"
+  },
+  "actions": [
+    {
+      "type": "delegatecall",
+      "title": "DELEGATECALL",
+      "plainEnglish": "This executes external code in the Safe's context.",
+      "technicalDetails": "Target 0x06f572E08e147D185286fD9338FdFFA572997cd0",
+      "addressesInvolved": [
+        "0x06f572E08e147D185286fD9338FdFFA572997cd0"
+      ],
+      "selector": "0xa9059cbb",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction uses DELEGATECALL",
+      "plainEnglish": "External code can run in the Safe's context and modify Safe state.",
+      "technicalExplanation": "Target 0x06f572E08e147D185286fD9338FdFFA572997cd0",
+      "recommendation": "Do not sign without a trusted technical review.",
+      "incidentPattern": "delegatecall-risk"
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "technicalExplanation": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "recommendation": "Review the raw transaction fields manually."
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe version could not be loaded; hash verification is unsupported.",
+      "technicalExplanation": "Safe version could not be loaded; hash verification is unsupported.",
+      "recommendation": "Review the raw transaction fields manually."
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "This executes external code in the Safe's context."
+  ],
+  "recommendation": "Do not sign. This transaction can change Safe control.",
+  "limitations": [
+    "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+    "Safe version could not be loaded; hash verification is unsupported."
+  ],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+      "0x06f572E08e147D185286fD9338FdFFA572997cd0"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

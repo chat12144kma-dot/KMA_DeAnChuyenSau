@@ -1,0 +1,85 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+    "chainId": 11155111,
+    "to": "0xC2771A9ac1B4Fbe42989bd46Bd29DfCf6d288bb2",
+    "value": "0",
+    "data": "0xa9059cbb00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000008ac7230489e80000",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000"
+  },
+  "hashCheck": {
+    "status": "not_provided"
+  },
+  "actions": [
+    {
+      "type": "erc20_transfer",
+      "title": "Token transfer",
+      "plainEnglish": "Transfer 10000000000000000000 raw units of token 0xC2771A9ac1B4Fbe42989bd46Bd29DfCf6d288bb2 to 0x70997970C51812dc3A010C7d01b50e0d17dc79C8.",
+      "technicalDetails": "transfer(0x70997970C51812dc3A010C7d01b50e0d17dc79C8, 10000000000000000000); raw amount: 10000000000000000000",
+      "addressesInvolved": [
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+      ],
+      "tokenAddress": "0xC2771A9ac1B4Fbe42989bd46Bd29DfCf6d288bb2",
+      "amountRaw": "10000000000000000000",
+      "selector": "0xa9059cbb",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "technicalExplanation": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "recommendation": "Review the raw transaction fields manually."
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe version could not be loaded; hash verification is unsupported.",
+      "technicalExplanation": "Safe version could not be loaded; hash verification is unsupported.",
+      "recommendation": "Review the raw transaction fields manually."
+    }
+  ],
+  "riskLevel": "medium",
+  "summaryBullets": [
+    "Transfer 10000000000000000000 raw units of token 0xC2771A9ac1B4Fbe42989bd46Bd29DfCf6d288bb2 to 0x70997970C51812dc3A010C7d01b50e0d17dc79C8."
+  ],
+  "recommendation": "Manual review recommended before signing.",
+  "limitations": [
+    "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+    "Safe version could not be loaded; hash verification is unsupported.",
+    "Token metadata for 0xc2771a9ac1b4fbe42989bd46bd29dfcf6d288bb2 could not be loaded. Raw token units are shown instead.",
+    "Balance for token 0xc2771a9ac1b4fbe42989bd46bd29dfcf6d288bb2 could not be loaded. Balance projection is unavailable."
+  ],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+      "0xC2771A9ac1B4Fbe42989bd46Bd29DfCf6d288bb2",
+      "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

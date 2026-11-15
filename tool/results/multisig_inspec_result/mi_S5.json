@@ -1,0 +1,96 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+    "chainId": 11155111,
+    "to": "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+    "value": "0",
+    "data": "0xf08a0323000000000000000000000000a0ee7a142d267c1f36714e4a8f75612f20a79720",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000"
+  },
+  "hashCheck": {
+    "status": "not_provided"
+  },
+  "actions": [
+    {
+      "type": "safe_admin",
+      "title": "Safe administration change",
+      "plainEnglish": "setFallbackHandler",
+      "technicalDetails": "setFallbackHandler(0xa0Ee7A142d267C1f36714E4a8F75612F20a79720)",
+      "addressesInvolved": [
+        "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
+      ],
+      "adminEffect": {
+        "kind": "set_fallback",
+        "handler": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
+      },
+      "selector": "0xf08a0323",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": [],
+    "fallbackHandler": {
+      "before": null,
+      "after": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
+    }
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "title": "Safe control change",
+      "plainEnglish": "setFallbackHandler",
+      "technicalExplanation": "setFallbackHandler(0xa0Ee7A142d267C1f36714E4a8F75612F20a79720)",
+      "recommendation": "Do not sign until reviewed by a trusted technical reviewer.",
+      "incidentPattern": "safe-control-change"
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "technicalExplanation": "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+      "recommendation": "Review the raw transaction fields manually."
+    },
+    {
+      "severity": "medium",
+      "title": "Analysis limitation",
+      "plainEnglish": "Safe version could not be loaded; hash verification is unsupported.",
+      "technicalExplanation": "Safe version could not be loaded; hash verification is unsupported.",
+      "recommendation": "Review the raw transaction fields manually."
+    }
+  ],
+  "riskLevel": "high",
+  "summaryBullets": [
+    "setFallbackHandler"
+  ],
+  "recommendation": "Do not sign until reviewed by a trusted technical reviewer.",
+  "limitations": [
+    "Safe owner set and threshold could not be read on-chain. Current-config comparison is based on best-effort storage reads.",
+    "Safe version could not be loaded; hash verification is unsupported."
+  ],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0x68481Fc3DbA311c6c6b8b42dd0a813f46eb5d3E1",
+      "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}
