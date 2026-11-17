@@ -1,0 +1,82 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+    "value": "0",
+    "data": "0xa9059cbb00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000008ac7230489e80000",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0xdee8e56fde6fb9bce0f3ba1f513e20ec119075317ab4c155dd2af8bb5b30e0a3"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0xdee8e56fde6fb9bce0f3ba1f513e20ec119075317ab4c155dd2af8bb5b30e0a3",
+    "providedSafeTxHash": "0xdee8e56fde6fb9bce0f3ba1f513e20ec119075317ab4c155dd2af8bb5b30e0a3",
+    "matches": true,
+    "status": "match"
+  },
+  "actions": [
+    {
+      "type": "erc20_transfer",
+      "title": "Token transfer",
+      "plainEnglish": "Transfer 10 mUSD to 0x70997970C51812dc3A010C7d01b50e0d17dc79C8.",
+      "technicalDetails": "transfer(0x70997970C51812dc3A010C7d01b50e0d17dc79C8, 10000000000000000000); amount 10 mUSD (raw: 10000000000000000000)",
+      "addressesInvolved": [
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+      ],
+      "tokenAddress": "0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+      "amountRaw": "10000000000000000000",
+      "selector": "0xa9059cbb",
+      "amountFormatted": "10 mUSD",
+      "tokenName": "Mock USD",
+      "tokenExplorerUrl": "https://sepolia.etherscan.io/token/0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": [
+      {
+        "asset": "Mock USD (mUSD)",
+        "tokenAddress": "0x5f72b31e5524708e82d4e44300fefdfc50ed2ac6",
+        "explorerUrl": "https://sepolia.etherscan.io/token/0x5f72b31e5524708e82d4e44300fefdfc50ed2ac6",
+        "beforeRaw": "1000000000000000000000",
+        "afterRaw": "990000000000000000000",
+        "beforeFormatted": "1000 mUSD",
+        "afterFormatted": "990 mUSD"
+      }
+    ]
+  },
+  "findings": [],
+  "riskLevel": "low",
+  "summaryBullets": [
+    "Transfer 10 mUSD to 0x70997970C51812dc3A010C7d01b50e0d17dc79C8."
+  ],
+  "recommendation": "Looks like a normal transfer. Verify recipient and amount out-of-band before signing.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+      "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

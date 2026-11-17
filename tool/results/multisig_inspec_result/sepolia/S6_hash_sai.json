@@ -1,0 +1,121 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526",
+    "value": "0",
+    "data": "0x8d80ff0a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000013201dae1519a42f1febac7ff0ec76197b5adb42d49e600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044a9059cbb0000000000000000000000004fa667660a0f03fdab0497052bc23a46b89171a1668306cd0af2faf4d1bd02ed2eb1fa8dab33c8c3271bb3dde01416b948a6960401dae1519a42f1febac7ff0ec76197b5adb42d49e600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044a9059cbb0000000000000000000000006be861e9495780dfffb15875efb4aa7a3234f40a668306cd0af2faf4d1bd02ed2eb1fa8dab33c8c3271bb3dde01416b948a696040000000000000000000000000000",
+    "operation": 1,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0xc2fd3548205d8321f1e8c3e436a49185ea4227030c3af29d1b3d698376b63d5a"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0xc2fd3548205d8321f1e8c3e336a49185ea4227030c3af29d1b3d698376b63d5a",
+    "providedSafeTxHash": "0xc2fd3548205d8321f1e8c3e436a49185ea4227030c3af29d1b3d698376b63d5a",
+    "matches": false,
+    "status": "mismatch"
+  },
+  "actions": [
+    {
+      "type": "multi_send",
+      "title": "MultiSend batch",
+      "plainEnglish": "This batch contains 2 decoded actions.",
+      "technicalDetails": "Decoded at depth 1",
+      "addressesInvolved": [
+        "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526"
+      ],
+      "selector": "0x8d80ff0a",
+      "children": [
+        {
+          "type": "delegatecall",
+          "title": "DELEGATECALL",
+          "plainEnglish": "This executes external code in the Safe's context.",
+          "technicalDetails": "Target 0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6",
+          "addressesInvolved": [
+            "0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6"
+          ],
+          "selector": "0xa9059cbb",
+          "reputation": {
+            "status": "unknown"
+          }
+        },
+        {
+          "type": "delegatecall",
+          "title": "DELEGATECALL",
+          "plainEnglish": "This executes external code in the Safe's context.",
+          "technicalDetails": "Target 0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6",
+          "addressesInvolved": [
+            "0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6"
+          ],
+          "selector": "0xa9059cbb",
+          "reputation": {
+            "status": "unknown"
+          }
+        }
+      ],
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction hash mismatch",
+      "plainEnglish": "The supplied hash does not match these transaction fields.",
+      "technicalExplanation": "Local EIP-712 recomputation differs from the imported hash.",
+      "recommendation": "Do not sign until manually reviewed.",
+      "incidentPattern": "api-integrity-risk"
+    },
+    {
+      "severity": "critical",
+      "title": "Transaction uses DELEGATECALL",
+      "plainEnglish": "External code can run in the Safe's context and modify Safe state.",
+      "technicalExplanation": "Target 0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6",
+      "recommendation": "Do not sign without a trusted technical review.",
+      "incidentPattern": "delegatecall-risk"
+    },
+    {
+      "severity": "critical",
+      "title": "Transaction uses DELEGATECALL",
+      "plainEnglish": "External code can run in the Safe's context and modify Safe state.",
+      "technicalExplanation": "Target 0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6",
+      "recommendation": "Do not sign without a trusted technical review.",
+      "incidentPattern": "delegatecall-risk"
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "This executes external code in the Safe's context.",
+    "This executes external code in the Safe's context."
+  ],
+  "recommendation": "Hash verification failed. Do not sign until the transaction details are confirmed.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526",
+      "0xDae1519a42F1FeBAC7ff0eC76197b5ADB42D49e6"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

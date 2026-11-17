@@ -1,0 +1,89 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "value": "0",
+    "data": "0x610b5925000000000000000000000000167165c3e4b9b53ce8f96ec9ba782ada91debf4d",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0x9dd4daf468fdcb68abadf46aeccb9778c5450ecca0754cc2bcd2e08e42db99e0"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0x9dd4daf468fdcb68abadf46aeccb9778c5450ecca0754cc2bcd2e08e42db99ed",
+    "providedSafeTxHash": "0x9dd4daf468fdcb68abadf46aeccb9778c5450ecca0754cc2bcd2e08e42db99e0",
+    "matches": false,
+    "status": "mismatch"
+  },
+  "actions": [
+    {
+      "type": "safe_admin",
+      "title": "Safe administration change",
+      "plainEnglish": "enableModule",
+      "technicalDetails": "enableModule(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d)",
+      "addressesInvolved": [
+        "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      ],
+      "adminEffect": {
+        "kind": "enable_module",
+        "module": "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      },
+      "selector": "0x610b5925",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [
+        "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      ],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction hash mismatch",
+      "plainEnglish": "The supplied hash does not match these transaction fields.",
+      "technicalExplanation": "Local EIP-712 recomputation differs from the imported hash.",
+      "recommendation": "Do not sign until manually reviewed.",
+      "incidentPattern": "api-integrity-risk"
+    },
+    {
+      "severity": "critical",
+      "title": "Safe control change",
+      "plainEnglish": "enableModule",
+      "technicalExplanation": "enableModule(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d)",
+      "recommendation": "Do not sign until reviewed by a trusted technical reviewer.",
+      "incidentPattern": "hidden-side-door"
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "enableModule"
+  ],
+  "recommendation": "Hash verification failed. Do not sign until the transaction details are confirmed.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

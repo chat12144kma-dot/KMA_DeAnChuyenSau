@@ -1,0 +1,91 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "value": "0",
+    "data": "0xf08a0323000000000000000000000000167165c3e4b9b53ce8f96ec9ba782ada91debf4d",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0x4ec875227545ad8ee0091550271af30309102da3b6577c8f088fb3069b464ec7"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0x4ec875227545ad8ee0091550271af30309102da3b6577c8f088fb3069b464ece",
+    "providedSafeTxHash": "0x4ec875227545ad8ee0091550271af30309102da3b6577c8f088fb3069b464ec7",
+    "matches": false,
+    "status": "mismatch"
+  },
+  "actions": [
+    {
+      "type": "safe_admin",
+      "title": "Safe administration change",
+      "plainEnglish": "setFallbackHandler",
+      "technicalDetails": "setFallbackHandler(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d)",
+      "addressesInvolved": [
+        "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      ],
+      "adminEffect": {
+        "kind": "set_fallback",
+        "handler": "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      },
+      "selector": "0xf08a0323",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": [],
+    "fallbackHandler": {
+      "before": "0xfd0732Dc9E303f09fCEf3a7388Ad10A83459Ec99",
+      "after": "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+    }
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction hash mismatch",
+      "plainEnglish": "The supplied hash does not match these transaction fields.",
+      "technicalExplanation": "Local EIP-712 recomputation differs from the imported hash.",
+      "recommendation": "Do not sign until manually reviewed.",
+      "incidentPattern": "api-integrity-risk"
+    },
+    {
+      "severity": "high",
+      "title": "Safe control change",
+      "plainEnglish": "setFallbackHandler",
+      "technicalExplanation": "setFallbackHandler(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d)",
+      "recommendation": "Do not sign until reviewed by a trusted technical reviewer.",
+      "incidentPattern": "safe-control-change"
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "setFallbackHandler"
+  ],
+  "recommendation": "Hash verification failed. Do not sign until the transaction details are confirmed.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

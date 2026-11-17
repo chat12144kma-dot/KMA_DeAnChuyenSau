@@ -24,16 +24,32 @@ Output đầy đủ: results/sth_sepolia_S2.txt, sth_sepolia_S6.txt, sth_sepolia
 | S6 | Tấn công (backdoor approvedHashes) | untrusted delegate call → 0x38869bf6…B526 (MultiSend v1.4.1 chính thức) | Cảnh báo vì lớp vỏ MultiSend, không mở multiSend nên không thấy 2 delegatecall lồng tới SleeperImpl |
 | S7 | Hợp lệ (BatchTransfer) | untrusted delegate call → 0x789a4b1A…d596 | Cùng cảnh báo với S2 → không phân biệt được tấn công và hợp lệ |
 
-## 3. Multisig Inspector (điền khi chạy)
+## 3. Multisig Inspector (Manual Input, Sepolia, nonce 0)
 
-| KB | safeTxHash (tool) | Hash MI | hashCheck | riskLevel | Kết luận MI |
-|----|-------------------|---------|-----------|-----------|-------------|
-| S1 | 0x84bcc6338c60cc879a4fc8626d1867824d3f17fe49808d93304d899883d539b0 | | | | |
-| S2 | 0x474be47ae22b37b072a1569f2c2615882af27353317ae6f30fb4c6b83a4437f9 | | | | |
-| S3 | 0xe2c8d9c6c683b64014f5833806260b48d41f6e294731416b90dd395accc1e433 | | | | |
-| S4 | 0x9dd4daf468fdcb68abadf46aeccb9778c5450ecca0754cc2bcd2e08e42db99ed | | | | |
-| S5 | 0x4ec875227545ad8ee0091550271af30309102da3b6577c8f088fb3069b464ece | | | | |
-| S6 | 0xc2fd3548205d8321f1e8c3e336a49185ea4227030c3af29d1b3d698376b63d5a | | | | |
-| S7 | 0x8b14ebe25aa25a238bbd13c10a24e866e89411f7e64de62746717d2b13032d20 | | | | |
-| S8 | 0xcf6ed8a9cc6e7155842e9ffb4c49a9c323521dcba68fd3256b48d566a6653e44 | | | | |
-| S9 | 0xdee8e56fde6fb9bce0f3ba1f513e20ec119075317ab4c155dd2af8bb5b30e0a3 | | | | |
+recomputedSafeTxHash của MI khớp safeTxHash của tool: 9/9.
+Mỗi KB chạy 2 lần: nhập hash đúng (_dung) và hash sai 1 ký tự (_sai).
+File: results/multisig_inspec_result/sepolia/S*_hash_dung.json, S*_hash_sai.json (S1.json = không nhập hash → status not_provided)
+
+| KB | Loại | Hash khớp | Hash đúng: status / risk / kết luận | Findings | Hash sai: status / risk |
+|----|------|-----------|-------------------------------------|----------|-------------------------|
+| S1 | Hợp lệ (chuyển ETH) | ✅ | match / low / normal transfer | Empty transaction | mismatch / critical |
+| S2 | Tấn công (ghi đè slot 0) | ✅ | match / critical / Do not sign | Transaction uses DELEGATECALL | mismatch / critical |
+| S3 | Tấn công (đổi owner/threshold) | ✅ | match / critical / Do not sign | Threshold materially lowered, Safe control change | mismatch / critical |
+| S4 | Tấn công (enableModule) | ✅ | match / critical / Do not sign | Safe control change | mismatch / critical |
+| S5 | Tấn công (fallbackHandler) | ✅ | match / high / Do not sign until reviewed | Safe control change | mismatch / critical |
+| S6 | Tấn công (backdoor qua multiSend) | ✅ | match / critical / Do not sign | Transaction uses DELEGATECALL ×2 | mismatch / critical |
+| S7 | Hợp lệ (delegatecall BatchTransfer) | ✅ | match / critical / Do not sign | Transaction uses DELEGATECALL | mismatch / critical |
+| S8 | Tấn công (approve vô hạn) | ✅ | match / high / Do not sign until reviewed | Unlimited token approval | mismatch / critical |
+| S9 | Hợp lệ (chuyển token) | ✅ | match / low / normal transfer | (không có) | mismatch / critical |
+
+## 4. Tổng hợp
+
+| Tiêu chí | Tool (cột Chặn) | Multisig Inspector | safe-tx-hashes-util |
+|----------|-----------------|--------------------|---------------------|
+| Hash khớp tool | — | 9/9 | 3/3 (S2, S6, S7) |
+| Phát hiện hash bị sửa | tự tính & đối chiếu | 9/9 (chỉ khi người dùng nhập hash) | so với Transaction Service API |
+| Chặn tấn công (S2–S6, S8) | 6/6 | 6/6 | chỉ cảnh báo delegatecall chung (S2, S6) |
+| Chặn nhầm hợp lệ (S1, S7, S9) | 0/3 | 1/3 (S7) | S7 cùng cảnh báo như S2 |
+| Phân biệt S2 (ghi đè slot 0) và S7 (hợp lệ) | Có (FAIL vs WARN) | Không (cùng "DELEGATECALL") | Không |
+
+Kết quả trùng với lần so sánh trên fork cũ (15–16/11) → không phụ thuộc môi trường.

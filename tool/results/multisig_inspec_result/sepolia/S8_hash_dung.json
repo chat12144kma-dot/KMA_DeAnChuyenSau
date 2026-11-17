@@ -1,0 +1,81 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+    "value": "0",
+    "data": "0x095ea7b3000000000000000000000000167165c3e4b9b53ce8f96ec9ba782ada91debf4dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0xcf6ed8a9cc6e7155842e9ffb4c49a9c323521dcba68fd3256b48d566a6653e44"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0xcf6ed8a9cc6e7155842e9ffb4c49a9c323521dcba68fd3256b48d566a6653e44",
+    "providedSafeTxHash": "0xcf6ed8a9cc6e7155842e9ffb4c49a9c323521dcba68fd3256b48d566a6653e44",
+    "matches": true,
+    "status": "match"
+  },
+  "actions": [
+    {
+      "type": "erc20_approve",
+      "title": "Token approval",
+      "plainEnglish": "Approve 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d to spend 115792089237316195423570985008687907853269984665640564039457.58400791… mUSD.",
+      "technicalDetails": "approve(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d, 115792089237316195423570985008687907853269984665640564039457584007913129639935); amount 115792089237316195423570985008687907853269984665640564039457.58400791… mUSD (raw: 115792089237316195423570985008687907853269984665640564039457584007913129639935)",
+      "addressesInvolved": [
+        "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      ],
+      "tokenAddress": "0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+      "amountRaw": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+      "selector": "0x095ea7b3",
+      "amountFormatted": "115792089237316195423570985008687907853269984665640564039457.58400791… mUSD",
+      "tokenName": "Mock USD",
+      "tokenExplorerUrl": "https://sepolia.etherscan.io/token/0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "title": "Unlimited token approval",
+      "plainEnglish": "Approve 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d to spend 115792089237316195423570985008687907853269984665640564039457.58400791… mUSD.",
+      "technicalExplanation": "approve(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d, 115792089237316195423570985008687907853269984665640564039457584007913129639935); amount 115792089237316195423570985008687907853269984665640564039457.58400791… mUSD (raw: 115792089237316195423570985008687907853269984665640564039457584007913129639935)",
+      "recommendation": "Verify the spender address and allowance out-of-band.",
+      "incidentPattern": "allowance-risk"
+    }
+  ],
+  "riskLevel": "high",
+  "summaryBullets": [
+    "Approve 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d to spend 115792089237316195423570985008687907853269984665640564039457.58400791… mUSD."
+  ],
+  "recommendation": "Do not sign until reviewed by a trusted technical reviewer.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6",
+      "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

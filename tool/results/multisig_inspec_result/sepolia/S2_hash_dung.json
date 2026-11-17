@@ -1,0 +1,75 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a",
+    "value": "0",
+    "data": "0xa9059cbb00000000000000000000000077952ba168ac6439b12654aed9d0c07bce8dcb7a0000000000000000000000000000000000000000000000000000000000000000",
+    "operation": 1,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0x474be47ae22b37b072a1569f2c2615882af27353317ae6f30fb4c6b83a4437f9"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0x474be47ae22b37b072a1569f2c2615882af27353317ae6f30fb4c6b83a4437f9",
+    "providedSafeTxHash": "0x474be47ae22b37b072a1569f2c2615882af27353317ae6f30fb4c6b83a4437f9",
+    "matches": true,
+    "status": "match"
+  },
+  "actions": [
+    {
+      "type": "delegatecall",
+      "title": "DELEGATECALL",
+      "plainEnglish": "This executes external code in the Safe's context.",
+      "technicalDetails": "Target 0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a",
+      "addressesInvolved": [
+        "0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a"
+      ],
+      "selector": "0xa9059cbb",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": []
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction uses DELEGATECALL",
+      "plainEnglish": "External code can run in the Safe's context and modify Safe state.",
+      "technicalExplanation": "Target 0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a",
+      "recommendation": "Do not sign without a trusted technical review.",
+      "incidentPattern": "delegatecall-risk"
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "This executes external code in the Safe's context."
+  ],
+  "recommendation": "Do not sign. This transaction can change Safe control.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}

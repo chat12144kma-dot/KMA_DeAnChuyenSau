@@ -1,0 +1,102 @@
+{
+  "input": {
+    "source": "manual",
+    "safeAddress": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "chainId": 11155111,
+    "to": "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+    "value": "0",
+    "data": "0x0d582f13000000000000000000000000167165c3e4b9b53ce8f96ec9ba782ada91debf4d0000000000000000000000000000000000000000000000000000000000000001",
+    "operation": 0,
+    "nonce": "0",
+    "safeTxGas": "0",
+    "baseGas": "0",
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "providedSafeTxHash": "0xe2c8d9c6c683b64014f5833806260b48d41f6e294731416b90dd395accc1e432"
+  },
+  "hashCheck": {
+    "recomputedSafeTxHash": "0xe2c8d9c6c683b64014f5833806260b48d41f6e294731416b90dd395accc1e433",
+    "providedSafeTxHash": "0xe2c8d9c6c683b64014f5833806260b48d41f6e294731416b90dd395accc1e432",
+    "matches": false,
+    "status": "mismatch"
+  },
+  "actions": [
+    {
+      "type": "safe_admin",
+      "title": "Safe administration change",
+      "plainEnglish": "Add owner 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d and set threshold to 1",
+      "technicalDetails": "addOwnerWithThreshold(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d, 1)",
+      "addressesInvolved": [
+        "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      ],
+      "adminEffect": {
+        "kind": "add_owner",
+        "owner": "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d",
+        "threshold": 1
+      },
+      "selector": "0x0d582f13",
+      "reputation": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "changes": {
+    "owners": {
+      "added": [
+        "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+      ],
+      "removed": []
+    },
+    "modules": {
+      "added": [],
+      "removed": []
+    },
+    "balances": [],
+    "threshold": {
+      "before": 2,
+      "after": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Transaction hash mismatch",
+      "plainEnglish": "The supplied hash does not match these transaction fields.",
+      "technicalExplanation": "Local EIP-712 recomputation differs from the imported hash.",
+      "recommendation": "Do not sign until manually reviewed.",
+      "incidentPattern": "api-integrity-risk"
+    },
+    {
+      "severity": "critical",
+      "title": "Threshold materially lowered",
+      "plainEnglish": "The approval threshold changes from 2 to 1.",
+      "technicalExplanation": "The new threshold is no more than half the current threshold.",
+      "recommendation": "Do not sign until this control change is independently confirmed.",
+      "incidentPattern": "safe-control-change"
+    },
+    {
+      "severity": "critical",
+      "title": "Safe control change",
+      "plainEnglish": "Add owner 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d and set threshold to 1",
+      "technicalExplanation": "addOwnerWithThreshold(0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d, 1)",
+      "recommendation": "Do not sign until reviewed by a trusted technical reviewer.",
+      "incidentPattern": "safe-control-change"
+    }
+  ],
+  "riskLevel": "critical",
+  "summaryBullets": [
+    "Add owner 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d and set threshold to 1"
+  ],
+  "recommendation": "Hash verification failed. Do not sign until the transaction details are confirmed.",
+  "limitations": [],
+  "threatIntel": {
+    "checkedAddresses": [
+      "0xb0A42015E7e24AA643704998fB491BD03CB50737",
+      "0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d"
+    ],
+    "matches": [],
+    "limitations": []
+  },
+  "limitationNote": "This tool decodes and analyzes transaction data locally. It cannot prove what another UI showed to a signer and cannot verify signer device security. Always verify recipient, amount, and intent through an independent channel."
+}
