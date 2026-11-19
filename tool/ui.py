@@ -143,6 +143,11 @@ with st.sidebar:
                              help="Nguồn dữ liệu độc lập để so với RPC chính. "
                                   "Bỏ trống = không đối chiếu.")
     witnesses = [r.strip() for r in wit_text.split(",") if r.strip() and r.strip() != rpc]
+    anc_text = st.text_input("RPC neo — chain thật (cách nhau bởi dấu phẩy)",
+                             value=cfg("RPC_ANCHORS"),
+                             help="RPC của mạng thật (vd. Alchemy, Tenderly) để so trạng thái "
+                                  "TRƯỚC giao dịch. Bỏ trống = không neo.")
+    anchors = [r.strip() for r in anc_text.split(",") if r.strip()]
 
 st.title("🛡️ Xác minh giao dịch Safe trước khi ký")
 st.caption("Công cụ chạy thử giao dịch trên bản sao của blockchain rồi kiểm tra: "
@@ -208,8 +213,8 @@ if run and sc:
     with st.spinner("Đang chạy thử giao dịch trên bản sao blockchain…"):
         try:
             out = run_scenario(w3, rpc, safe, Web3.to_checksum_address(attacker),
-                               sc, allowlist, witnesses)
-            st.session_state["result"] = {"sc": sc, "out": out, "witnesses": witnesses}
+                               sc, allowlist, witnesses, anchors)
+            st.session_state["result"] = {"sc": sc, "out": out, "witnesses": witnesses, "anchors": anchors}
         except Exception as e:  # noqa: BLE001
             st.session_state.pop("result", None)
             st.error(f"Mô phỏng thất bại: {e}")
