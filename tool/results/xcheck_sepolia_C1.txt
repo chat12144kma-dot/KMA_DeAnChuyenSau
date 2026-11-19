@@ -1,0 +1,150 @@
+RPC chính: http://127.0.0.1:8546   |   nhân chứng: ['http://127.0.0.1:8547']
+
+=== S1 Hợp lệ: gọi rỗng tới owner #2 ===
+  safeTxHash: 0x84bcc6338c60cc879a4fc8626d1867824d3f17fe49808d93304d899883d539b0
+  [FAIL] 1 phát hiện:
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: (không đổi)
+  [Đối chứng theo mẫu] PASS: Không có calldata
+  [Đối chứng thực tế]  PASS: Không có calldata
+  ➜ Kết luận giao dịch: PASS   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S2 Bybit: delegatecall transfer() ngụy trang ===
+  safeTxHash: 0x474be47ae22b37b072a1569f2c2615882af27353317ae6f30fb4c6b83a4437f9
+  [FAIL] 5 phát hiện:
+    - (static) [WARN] operation: delegatecall tới 0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a — địa chỉ không nằm trong allowlist
+    - (consequence) [CRITICAL] FUNDS_DRAINED: Kẻ tấn công rút được 10.0 ETH mà không cần chữ ký
+    - (consequence) [CRITICAL] SAFE_BRICKED: Proxy không còn trả lời ABI Safe — owners mất quyền điều khiển
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:masterCopy: [sau] http://127.0.0.1:8546 → 0x29fcB43b46531BcA003ddC8FCB67FFE91900C762  |  http://127.0.0.1:8547 → 0x77952BA168ac6439b12654AEd9d0C07BCe8dCb7a
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: FUNDS_DRAINED, SAFE_BRICKED
+  Thay đổi tài sản: (không đổi)
+  [Đối chứng theo mẫu] PASS: Giải mã được: transfer(address,uint256)
+  [Đối chứng thực tế]  PASS: Không có mẫu nguy hiểm (transfer(address,uint256))
+  ➜ Kết luận giao dịch: FAIL   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S3 Thêm owner + hạ threshold xuống 1 ===
+  safeTxHash: 0xe2c8d9c6c683b64014f5833806260b48d41f6e294731416b90dd395accc1e433
+  [FAIL] 3 phát hiện:
+    - (simulation) [HIGH] owners: Owner thêm: ['0x167165c3e4b9b53ce8f96ec9ba782ada91debf4d']  bỏ: []
+        trước: ['0x4fA667660A0F03fdab0497052BC23a46B89171A1', '0x6bE861E9495780dfFfb15875EFB4aa7A3234f40a', '0xB1A96Bae376397E18267a9CC657CC83ed05219f2']
+        sau  : ['0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d', '0x4fA667660A0F03fdab0497052BC23a46B89171A1', '0x6bE861E9495780dfFfb15875EFB4aa7A3234f40a', '0xB1A96Bae376397E18267a9CC657CC83ed05219f2']
+    - (simulation) [CRITICAL] threshold: Threshold 2 → 1 (giảm — cần ít chữ ký hơn)
+        trước: 2
+        sau  : 1
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: (không đổi)
+  [Đối chứng theo mẫu] FAIL: Gọi hàm quản trị Safe: addOwnerWithThreshold(address,uint256)
+  [Đối chứng thực tế]  FAIL: Gọi hàm quản trị Safe: addOwnerWithThreshold(address,uint256)
+  ➜ Kết luận giao dịch: FAIL   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S4 Bật module của kẻ tấn công ===
+  safeTxHash: 0x9dd4daf468fdcb68abadf46aeccb9778c5450ecca0754cc2bcd2e08e42db99ed
+  [FAIL] 2 phát hiện:
+    - (simulation) [CRITICAL] modules: Module mới ['0x167165c3e4b9b53ce8f96ec9ba782ada91debf4d'] — module thực thi được giao dịch KHÔNG cần chữ ký
+        trước: []
+        sau  : ['0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d']
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: (không đổi)
+  [Đối chứng theo mẫu] FAIL: Gọi hàm quản trị Safe: enableModule(address)
+  [Đối chứng thực tế]  FAIL: Gọi hàm quản trị Safe: enableModule(address)
+  ➜ Kết luận giao dịch: FAIL   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S5 Đổi fallback handler ===
+  safeTxHash: 0x4ec875227545ad8ee0091550271af30309102da3b6577c8f088fb3069b464ece
+  [FAIL] 2 phát hiện:
+    - (simulation) [HIGH] fallbackHandler: Fallback handler bị thay — lời gọi lạ tới Safe sẽ chạy code mới
+        trước: 0xfd0732Dc9E303f09fCEf3a7388Ad10A83459Ec99
+        sau  : 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: (không đổi)
+  [Đối chứng theo mẫu] FAIL: Gọi hàm quản trị Safe: setFallbackHandler(address)
+  [Đối chứng thực tế]  FAIL: Gọi hàm quản trị Safe: setFallbackHandler(address)
+  ➜ Kết luận giao dịch: FAIL   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S6 Cửa hậu: MultiSend cài approvedHashes ===
+  safeTxHash: 0xc2fd3548205d8321f1e8c3e336a49185ea4227030c3af29d1b3d698376b63d5a
+  [FAIL] 4 phát hiện:
+    - (static) [WARN] operation: delegatecall lồng trong multiSend (tầng 1) tới 0xdae1519a42f1febac7ff0ec76197b5adb42d49e6 — địa chỉ không nằm trong allowlist
+    - (static) [WARN] operation: delegatecall lồng trong multiSend (tầng 1) tới 0xdae1519a42f1febac7ff0ec76197b5adb42d49e6 — địa chỉ không nằm trong allowlist
+    - (consequence) [CRITICAL] TAKEOVER_WITHOUT_SIGNATURES: Kẻ tấn công tự thêm mình làm owner (threshold=1) không cần ai ký
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, TAKEOVER_WITHOUT_SIGNATURES
+  Thay đổi tài sản: (không đổi)
+  [Đối chứng theo mẫu] WARN: Selector không xác định 0x8d80ff0a
+  [Đối chứng thực tế]  PASS: multiSend gồm 2 lời gọi, không có hàm nhạy cảm
+  ➜ Kết luận giao dịch: FAIL   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S7 Hợp lệ: delegatecall thư viện chia ETH ===
+  safeTxHash: 0x8b14ebe25aa25a238bbd13c10a24e866e89411f7e64de62746717d2b13032d20
+  [FAIL] 2 phát hiện:
+    - (static) [WARN] operation: delegatecall tới 0x789a4b1A094b021260b4b474a9C9c84838C3d596 — địa chỉ không nằm trong allowlist
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: Safe chuyển đi 0.2 ETH
+  [Đối chứng theo mẫu] WARN: Selector không xác định 0x7a53bcfc
+  [Đối chứng thực tế]  PASS: Không có mẫu nguy hiểm (0x7a53bcfc)
+  ➜ Kết luận giao dịch: WARN   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S8 Approve vô hạn token cho kẻ tấn công ===
+  safeTxHash: 0xcf6ed8a9cc6e7155842e9ffb4c49a9c323521dcba68fd3256b48d566a6653e44
+  [FAIL] 2 phát hiện:
+    - (asset) [HIGH] UNLIMITED_APPROVAL: Approve vô hạn trên token 0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6 cho 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d — ví thường (EOA); bên này rút được token của Safe bất cứ lúc nào, không cần chữ ký
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: approve VÔ HẠN token 0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6 cho 0x167165C3e4b9B53cE8F96Ec9BA782aDA91deBF4d
+  [Đối chứng theo mẫu] FAIL: approve vô hạn
+  [Đối chứng thực tế]  FAIL: approve vô hạn
+  ➜ Kết luận giao dịch: FAIL   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+=== S9 Hợp lệ: chuyển 10 token cho owner #2 ===
+  safeTxHash: 0xdee8e56fde6fb9bce0f3ba1f513e20ec119075317ab4c155dd2af8bb5b30e0a3
+  [FAIL] 1 phát hiện:
+    - (xcheck) [CRITICAL] RPC_DISCREPANCY:trace: Trace storage của Safe khác nhau giữa http://127.0.0.1:8546 và http://127.0.0.1:8547
+  Storage Safe bị ghi: (chỉ nonce +1)
+  Thử khai thác: NONE, NONE
+  Thay đổi tài sản: chuyển 10000000000000000000 đơn vị token 0x5f72B31E5524708e82D4e44300FeFdFC50eD2Ac6 tới 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+  [Đối chứng theo mẫu] PASS: Giải mã được: transfer(address,uint256)
+  [Đối chứng thực tế]  PASS: Không có mẫu nguy hiểm (transfer(address,uint256))
+  ➜ Kết luận giao dịch: PASS   |   Môi trường RPC: KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu
+
+========================================================================================================================================================
+Kịch bản                                    Loại    Tĩnh      Bất biến  Diff      Hậu quả   Tài sản   Đối chiếu Kết hợp   Chặn      Theo mẫu  Thực tế   
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+S1 Hợp lệ: gọi rỗng tới owner #2            benign  -         -         -         -         -         X         -         -         -         -         
+S2 Bybit: delegatecall transfer() ngụy tra  attack  X         -         -         X         -         X         X         X         -         -         
+S3 Thêm owner + hạ threshold xuống 1        attack  -         X         -         -         -         X         X         X         X         X         
+S4 Bật module của kẻ tấn công               attack  -         X         -         -         -         X         X         X         X         X         
+S5 Đổi fallback handler                     attack  -         X         -         -         -         X         X         X         X         X         
+S6 Cửa hậu: MultiSend cài approvedHashes    attack  X         -         -         X         -         X         X         X         X         -         
+S7 Hợp lệ: delegatecall thư viện chia ETH   benign  X         -         -         -         -         X         X         -         X         -         
+S8 Approve vô hạn token cho kẻ tấn công     attack  -         -         -         -         X         X         X         X         X         X         
+S9 Hợp lệ: chuyển 10 token cho owner #2     benign  -         -         -         -         -         X         -         -         -         -         
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+(X = gắn cờ;  'Đối chiếu' đánh giá MÔI TRƯỜNG, không tính vào 'Kết hợp' — 'Kết hợp' là kết luận về GIAO DỊCH)
+
+[1] Phát hiện giao dịch độc hại
+  Tĩnh       TPR = 2/6 = 33%   FPR = 1/3 = 33%
+  Bất biến   TPR = 3/6 = 50%   FPR = 0/3 = 0%
+  Diff       TPR = 0/6 = 0%   FPR = 0/3 = 0%
+  Hậu quả    TPR = 2/6 = 33%   FPR = 0/3 = 0%
+  Tài sản    TPR = 1/6 = 17%   FPR = 0/3 = 0%
+  Kết hợp    TPR = 6/6 = 100%   FPR = 1/3 = 33%
+  Chặn       TPR = 6/6 = 100%   FPR = 0/3 = 0%
+  Theo mẫu   TPR = 5/6 = 83%   FPR = 1/3 = 33%
+  Thực tế    TPR = 4/6 = 67%   FPR = 0/3 = 0%
+
+[2] Phát hiện môi trường RPC bị thao túng
+  Đối chiếu  gắn cờ 9/9 kịch bản (RPC trung thực phải = 0/9; RPC bị thao túng nên = 9/9)

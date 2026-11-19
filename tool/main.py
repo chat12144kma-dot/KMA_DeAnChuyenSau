@@ -168,7 +168,37 @@ def _mentions(obj, slots: set[str]) -> bool:
     return False
 
 
-def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
+def read_state_retry(r: str, safe: str, tries: int = 5) -> dict:
+    """Đọc trạng thái từ RPC công khai; tự đợi và thử lại khi bị giới hạn tốc độ."""
+    import time
+    for k in range(tries):
+        try:
+            return read_state(r, safe)
+        except Exception as e:
+            if k == tries - 1:
+                raise
+            wait = 3 * (k + 1)
+            print(f"  (neo {r.split('/')[2]} lỗi: {str(e)[:60]}… — thử lại sau {wait}s)")
+            time.sleep(wait)
+
+
+def witness_simulate(r: str, safe: str, sc: dict) -> dict:
+    """Nhân chứng độc lập: Anvil fork riêng (fork từ nhà cung cấp RPC khác) tự mô phỏng lại giao dịch."""
+    ww = Web3(Web3.HTTPProvider(r, request_kwargs={"timeout": 60}))
+    snap = snapshot(ww)
+    try:
+        before = read_state(r, safe)
+        res = simulate_safe_tx(ww, safe, sc["to"], sc["data"], sc.get("value", 0),
+                               sc["operation"], sc.get("gas", 3_000_000),
+                               **sc.get("refund", {}))
+        after = read_state(r, safe)
+        changes = trace_safe_storage(ww, res["tx_hash"], safe)
+    finally:
+        revert(ww, snap)
+    return {"before": before, "after": after, "changes": changes, "status": res["status"]}
+
+
+def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=(), anchors=()) -> dict:
     snap = snapshot(w3)
     conseq, xcheck_f = [], []
     asset_f, moves = [], []
@@ -176,20 +206,12 @@ def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
     try:
         before = read_state(rpc, safe)
         eth_before = w3.eth.get_balance(safe_cs)
-        xcheck_f += xcheck_states(before, [read_state(r, safe) for r in witnesses], "trước")
         res = simulate_safe_tx(w3, safe, sc["to"], sc["data"], sc.get("value", 0),
                                sc["operation"], sc.get("gas", 3_000_000),
                                **sc.get("refund", {}))
         after = read_state(rpc, safe)
         eth_after = w3.eth.get_balance(safe_cs)
-        xcheck_f += xcheck_states(after, [read_state(r, safe) for r in witnesses], "sau")
         changes = trace_safe_storage(w3, res["tx_hash"], safe)  # phải trace TRƯỚC khi revert
-        for r in witnesses:
-            ww = Web3(Web3.HTTPProvider(r, request_kwargs={"timeout": 60}))
-            if _canon(trace_safe_storage(ww, res["tx_hash"], safe)) != _canon(changes):
-                xcheck_f.append({"layer": "xcheck", "invariant": "RPC_DISCREPANCY:trace",
-                                 "risk": "CRITICAL",
-                                 "message": f"Trace storage của Safe khác nhau giữa {rpc} và {r}"})
         if res["status"] == 1:
             # đọc sự kiện token TRƯỚC khi revert (receipt còn tồn tại)
             asset_f, moves = asset_checks(w3, res["tx_hash"], safe)
@@ -199,6 +221,22 @@ def run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses=()) -> dict:
             conseq = run_consequence_checks(w3, safe, attacker)
     finally:
         revert(w3, snap)
+    # (a) Neo vào chain thật: chỉ so trạng thái TRƯỚC (giao dịch chưa tồn tại trên chain)
+    xcheck_f += xcheck_states(before, [read_state_retry(r, safe) for r in anchors], "trước, chain thật")
+    # (b) Nhân chứng tự mô phỏng trên fork riêng → so trước / sau / status / trace
+    for r in witnesses:
+        wr = witness_simulate(r, safe, sc)
+        xcheck_f += xcheck_states(before, [wr["before"]], "trước")
+        xcheck_f += xcheck_states(after, [wr["after"]], "sau")
+        if wr["status"] != res["status"]:
+            xcheck_f.append({"layer": "xcheck", "invariant": "RPC_DISCREPANCY:status",
+                             "risk": "CRITICAL",
+                             "message": f"Kết quả mô phỏng khác nhau: {rpc} → status {res['status']}  |  "
+                                        f"{r} → status {wr['status']}"})
+        if _canon(wr["changes"]) != _canon(changes):
+            xcheck_f.append({"layer": "xcheck", "invariant": "RPC_DISCREPANCY:trace",
+                             "risk": "CRITICAL",
+                             "message": f"Trace storage của Safe khác nhau giữa {rpc} và {r}"})
 
     static_f = static_checks(sc, allowlist)
     if res["status"] != 1:
@@ -232,12 +270,13 @@ if __name__ == "__main__":
     # RPC nhân chứng độc lập để đối chiếu (bỏ qua nếu trùng RPC chính)
     witnesses = [r.strip() for r in os.getenv("RPC_WITNESSES", "").split(",")
                  if r.strip() and r.strip() != rpc]
+    anchors = [r.strip() for r in os.getenv("RPC_ANCHORS", "").split(",") if r.strip()]
     print(f"RPC chính: {rpc}   |   nhân chứng: {witnesses or '(không có — bỏ qua đối chiếu)'}")
 
     rows = []
     for sc in build_scenarios(w3, env):
         print(f"\n=== {sc['label']} ===")
-        out = run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses)
+        out = run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses, anchors)
         base, reason = pattern_check(sc)
         base2, reason2 = pattern_check_realistic(sc)
         print(f"  safeTxHash: {out['res']['safe_tx_hash']}")
@@ -257,7 +296,7 @@ if __name__ == "__main__":
         tx_verdict = verdict(tx_findings)
         env_bad = out["layers"]["xcheck"]
         env_txt = ("KHÔNG ĐÁNG TIN — dừng ký, kiểm tra lại nguồn dữ liệu" if env_bad
-                   else "nhất quán" if witnesses else "chưa đối chiếu")
+                   else "nhất quán" if (witnesses or anchors) else "chưa đối chiếu")
         print(f"  ➜ Kết luận giao dịch: {tx_verdict}   |   Môi trường RPC: {env_txt}")
 
         flags = dict(out["layers"])
@@ -288,7 +327,7 @@ if __name__ == "__main__":
               f"FPR = {fp}/{len(benign)} = {fp / len(benign):.0%}")
 
     print("\n[2] Phát hiện môi trường RPC bị thao túng")
-    if witnesses:
+    if witnesses or anchors:
         n_env = sum(r["xcheck"] for r in rows)
         print(f"  Đối chiếu  gắn cờ {n_env}/{len(rows)} kịch bản "
               f"(RPC trung thực phải = 0/{len(rows)}; RPC bị thao túng nên = {len(rows)}/{len(rows)})")
