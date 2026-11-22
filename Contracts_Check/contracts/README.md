@@ -1,66 +1,24 @@
-## Foundry
+# Contract thử nghiệm
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Bốn contract tối giản tự viết để tái hiện cơ chế tấn công và tạo kịch bản đối chứng. Không dựa trên bytecode của vụ Bybit.
 
-Foundry consists of:
+| Contract | Kịch bản | Vai trò |
+| --- | --- | --- |
+| `src/MaliciousImpl.sol` | S2 | Hàm mang chữ ký `transfer(address,uint256)`; khi bị Safe delegatecall sẽ ghi đè slot 0 (masterCopy). Có hàm rút ETH/ERC-20 sau khi chiếm quyền. |
+| `src/SleeperImpl.sol` | S6 | Khi bị delegatecall, ghi sẵn `approvedHashes` cho một giao dịch tương lai của kẻ tấn công (backdoor). |
+| `src/BatchTransfer.sol` | S7 | Thư viện chia ETH lành tính, cố ý không nằm trong allowlist. |
+| `src/MockERC20.sol` | S8, S9 | Token ERC-20 tối giản. |
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Địa chỉ đã triển khai trên Sepolia nằm trong `tool/.env.sepolia`.
 
-## Documentation
+## Biên dịch và triển khai
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```bash
+cd Contracts_Check/contracts
+forge build
+forge create src/MaliciousImpl.sol:MaliciousImpl --rpc-url <SEPOLIA_RPC> \
+      --private-key <KHOA_RIENG> --broadcast
 ```
 
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- `forge build`: biên dịch các contract trong `src/`, kết quả ghi vào `out/` (đã được bỏ qua trong git).
+- `forge create … --broadcast`: biên dịch rồi gửi giao dịch triển khai lên mạng. Lặp lại cho ba contract còn lại. Không contract nào có constructor nên không cần tham số.

@@ -138,15 +138,16 @@ with st.sidebar:
     st.caption(f"Ví Safe: `{safe}`")
     st.divider()
     st.header("Nguồn đối chiếu")
-    wit_text = st.text_input("RPC nhân chứng (cách nhau bởi dấu phẩy)",
+    wit_text = st.text_input("Witness node (cách nhau bởi dấu phẩy)",
                              value=cfg("RPC_WITNESSES"),
-                             help="Nguồn dữ liệu độc lập để so với RPC chính. "
-                                  "Bỏ trống = không đối chiếu.")
+                             help="Fork độc lập từ nhà cung cấp RPC khác, cùng block; "
+                                  "tự chạy lại mô phỏng để so với RPC chính. "
+                                  "Bỏ trống = không dùng witness.")
     witnesses = [r.strip() for r in wit_text.split(",") if r.strip() and r.strip() != rpc]
-    anc_text = st.text_input("RPC neo — chain thật (cách nhau bởi dấu phẩy)",
+    anc_text = st.text_input("Anchor RPC — mạng thật (cách nhau bởi dấu phẩy)",
                              value=cfg("RPC_ANCHORS"),
                              help="RPC của mạng thật (vd. Alchemy, Tenderly) để so trạng thái "
-                                  "TRƯỚC giao dịch. Bỏ trống = không neo.")
+                                  "TRƯỚC giao dịch. Bỏ trống = không dùng anchor.")
     anchors = [r.strip() for r in anc_text.split(",") if r.strip()]
 
 st.title("🛡️ Xác minh giao dịch Safe trước khi ký")
@@ -225,6 +226,8 @@ if run and sc:
 r = st.session_state.get("result")
 if r:
     sc_r, out, wit_r = r["sc"], r["out"], r["witnesses"]
+    anc_r = r.get("anchors", [])
+    n_sources = len(wit_r) + len(anc_r)
     tx_findings = [f for f in out["findings"] if f.get("layer") != "xcheck"]
     env_findings = [f for f in out["findings"] if f.get("layer") == "xcheck"]
     tx_verdict = verdict(tx_findings)
@@ -249,11 +252,12 @@ if r:
     if env_bad:
         st.error("**Nguồn dữ liệu: KHÔNG ĐÁNG TIN.** Các RPC trả lời khác nhau — dừng ký và "
                  "kiểm tra lại nguồn dữ liệu, kể cả khi giao dịch trông vô hại.")
-    elif wit_r:
-        st.info(f"**Nguồn dữ liệu: nhất quán** giữa RPC chính và {len(wit_r)} nguồn đối chiếu.")
+    elif n_sources:
+        st.info(f"**Nguồn dữ liệu: nhất quán** giữa RPC chính và {n_sources} nguồn đối chiếu "
+                f"({len(wit_r)} witness, {len(anc_r)} anchor).")
     else:
         st.info("**Nguồn dữ liệu: chưa đối chiếu** (chỉ dùng một RPC). "
-                "Thêm RPC nhân chứng ở thanh bên để kiểm tra.")
+                "Thêm witness node hoặc anchor RPC ở thanh bên để kiểm tra.")
 
     st.markdown("**Mã băm giao dịch (safeTxHash) — so từng ký tự với màn hình ví cứng:**")
     st.code(out["res"]["safe_tx_hash"], language=None)
@@ -285,7 +289,7 @@ if r:
     with st.expander("Chi tiết kỹ thuật"):
         st.markdown("**Kết quả từng lớp kiểm tra**")
         st.table([{"Lớp": LAYER_NAMES.get(k, k),
-                   "Kết quả": ("— chưa chạy" if k == "xcheck" and not wit_r
+                   "Kết quả": ("— chưa chạy" if k == "xcheck" and not n_sources
                                else "⚠️ Gắn cờ" if v else "✓ Sạch")}
                   for k, v in out["layers"].items()])
 
@@ -305,7 +309,7 @@ if r:
                    f"{len(env_findings)} · Người ký mô phỏng: {len(out['res'].get('signers', []))}")
 
     report = {"scenario": sc_r, "tx_verdict": tx_verdict, "env_untrusted": env_bad,
-              "rpc": rpc, "witnesses": wit_r, "safe": safe,
+              "rpc": rpc, "witnesses": wit_r, "anchors": anc_r, "safe": safe,
               "safe_tx_hash": out["res"]["safe_tx_hash"], "layers": out["layers"],
               "findings": out["findings"], "touched": out["touched"],
               "moves": out["moves"], "conseq": out["conseq"]}

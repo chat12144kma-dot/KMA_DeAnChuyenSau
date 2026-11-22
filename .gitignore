@@ -1,26 +1,32 @@
-.env
-anvil_state.json
-cat > .gitignore << 'EOF'
-# Python
-tool/venv/
-__pycache__/
-*.pyc
-
-# Bí mật — KHÔNG commit
+# ---------------- Bí mật: KHÔNG BAO GIỜ commit ----------------
+# Chứa API key, RPC có key, private key. tool/.env.sepolia chỉ có địa chỉ công khai nên được commit.
 .env
 tool/.env
 
-# State Anvil (nặng, tái tạo được)
+# ---------------- Python ----------------
+tool/venv/
+.venv/
+__pycache__/
+*.pyc
+
+# ---------------- Trạng thái Anvil (nặng, tái tạo được) ----------------
 anvil_state*.json
 states/
 
-# Foundry: thư viện tải về và file build
-Contracts_Check/contracts/lib/
+# ---------------- Foundry: thư viện tải về và file build ----------------
+# Các contract trong src/ không import thư viện ngoài, nên không cần lib/ để biên dịch.
+Contracts_Check/out/
+Contracts_Check/cache/
+Contracts_Check/lib/
 Contracts_Check/contracts/out/
 Contracts_Check/contracts/cache/
+Contracts_Check/contracts/lib/
 Contracts_Check/contracts/broadcast/
-EOF
-cat .gitignore
-*:Zone.Identifier
+
+# ---------------- File tạm khi làm việc ----------------
+# Bản sao lưu tạo ra khi áp patch (vd. main_truoc_xcheck2.py, ui_truoc_anchors.py)
+tool/*_truoc_*.py
 tool/trace_0x*.txt
 tool/flagged_txs.txt
+# Siêu dữ liệu Windows khi chép file qua WSL
+*:Zone.Identifier

@@ -271,10 +271,14 @@ if __name__ == "__main__":
     witnesses = [r.strip() for r in os.getenv("RPC_WITNESSES", "").split(",")
                  if r.strip() and r.strip() != rpc]
     anchors = [r.strip() for r in os.getenv("RPC_ANCHORS", "").split(",") if r.strip()]
-    print(f"RPC chính: {rpc}   |   nhân chứng: {witnesses or '(không có — bỏ qua đối chiếu)'}")
+    # ONLY="S2,S7" -> chỉ chạy các kịch bản được liệt kê (tiện khi demo); để trống = chạy S1–S9
+    only = {s.strip().upper() for s in os.getenv("ONLY", "").split(",") if s.strip()}
+    print(f"RPC chính: {rpc}   |   witness: {witnesses or '(không có)'}   |   anchor: {anchors or '(không có)'}")
 
     rows = []
     for sc in build_scenarios(w3, env):
+        if only and sc["label"].split()[0].upper() not in only:
+            continue
         print(f"\n=== {sc['label']} ===")
         out = run_scenario(w3, rpc, safe, attacker, sc, allowlist, witnesses, anchors)
         base, reason = pattern_check(sc)
@@ -323,8 +327,9 @@ if __name__ == "__main__":
         if k == "xcheck":
             continue
         tp, fp = sum(r[k] for r in attacks), sum(r[k] for r in benign)
-        print(f"  {n:<10} TPR = {tp}/{len(attacks)} = {tp / len(attacks):.0%}   "
-              f"FPR = {fp}/{len(benign)} = {fp / len(benign):.0%}")
+        tpr = f"{tp / len(attacks):.0%}" if attacks else "n/a"
+        fpr = f"{fp / len(benign):.0%}" if benign else "n/a"
+        print(f"  {n:<10} TPR = {tp}/{len(attacks)} = {tpr}   FPR = {fp}/{len(benign)} = {fpr}")
 
     print("\n[2] Phát hiện môi trường RPC bị thao túng")
     if witnesses or anchors:
@@ -332,4 +337,4 @@ if __name__ == "__main__":
         print(f"  Đối chiếu  gắn cờ {n_env}/{len(rows)} kịch bản "
               f"(RPC trung thực phải = 0/{len(rows)}; RPC bị thao túng nên = {len(rows)}/{len(rows)})")
     else:
-        print("  (không chạy — đặt RPC_WITNESSES để bật đối chiếu)")
+        print("  (không chạy — đặt RPC_WITNESSES hoặc RPC_ANCHORS để bật đối chiếu)")
