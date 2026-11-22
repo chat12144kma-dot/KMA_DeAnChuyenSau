@@ -30,3 +30,8 @@ tool/trace_0x*.txt
 tool/flagged_txs.txt
 # Siêu dữ liệu Windows khi chép file qua WSL
 *:Zone.Identifier
+
+# Cấu hình cục bộ
+.agents/
+.claude/
+tool/.streamlit/
